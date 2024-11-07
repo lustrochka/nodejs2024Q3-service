@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 import { User } from './user.interface';
 import { validate } from 'uuid';
+import { UserDto } from './user.dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UserService {
@@ -28,13 +30,14 @@ export class UserService {
   ];
 
   getUsers(): User[] {
-    return this.users;
+    return this.users.map((user) => plainToClass(UserDto, user));
   }
 
   getUser(id: string): User {
     if (!validate(id)) throw new BadRequestException('Invalid id');
     const targetUser = this.users.find((user) => user.id === id);
     if (!targetUser) throw new NotFoundException('User does not exist');
-    return targetUser;
+    const userDto = plainToClass(UserDto, targetUser);
+    return userDto;
   }
 }
