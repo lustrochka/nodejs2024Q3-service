@@ -56,4 +56,11 @@ export class UserService {
     this.users.push(newUser);
     return newUser;
   }
+
+  deleteUser(id: string) {
+    if (!validate(id)) throw new BadRequestException('Invalid id');
+    const targetUser = this.users.findIndex((user) => user.id === id);
+    if (targetUser === -1) throw new NotFoundException('User does not exist');
+    this.users.splice(targetUser, 1);
+  }
 }
