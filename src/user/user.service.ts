@@ -2,12 +2,14 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { User } from './user.interface';
 import { validate } from 'uuid';
 import { UserDto } from './user.dto';
 import { plainToClass } from 'class-transformer';
 import { CreateUserDto } from './create-user.dto';
+import { UpdateUserDto } from './update-user.dto';
 import { v4 } from 'uuid';
 
 @Injectable()
@@ -55,6 +57,18 @@ export class UserService {
     };
     this.users.push(newUser);
     return newUser;
+  }
+
+  updateUser(updateUserDto: UpdateUserDto, id: string) {
+    const { oldPassword, newPassword } = updateUserDto;
+    if (!validate(id)) throw new BadRequestException('Invalid id');
+    const targetUser = this.users.find((user) => user.id === id);
+    if (!targetUser) throw new NotFoundException('User does not exist');
+    if (targetUser.password !== oldPassword)
+      throw new ForbiddenException('Wrong old password');
+    targetUser.password = newPassword;
+    const userDto = plainToClass(UserDto, targetUser);
+    return userDto;
   }
 
   deleteUser(id: string) {

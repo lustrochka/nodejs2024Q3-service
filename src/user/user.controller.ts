@@ -4,6 +4,7 @@ import {
   Param,
   Body,
   Post,
+  Put,
   Delete,
   HttpCode,
   HttpStatus,
@@ -11,6 +12,7 @@ import {
 import { UserService } from './user.service';
 import { User } from './user.interface';
 import { CreateUserDto } from './create-user.dto';
+import { UpdateUserDto } from './update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -29,6 +31,11 @@ export class UserController {
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
+  }
+
+  @Put(':id')
+  updateUser(@Body() updateUserDto: UpdateUserDto, @Param('id') id: string) {
+    return this.userService.updateUser(updateUserDto, id);
   }
 
   @Delete(':id')
