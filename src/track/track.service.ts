@@ -1,5 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Track } from './track.interface';
+import { validate } from 'uuid';
 
 @Injectable()
 export class TrackService {
@@ -22,5 +27,13 @@ export class TrackService {
 
   getTracks(): Track[] {
     return this.tracks;
+  }
+
+  getTrack(id: string): Track {
+    if (!validate(id)) throw new BadRequestException('Invalid id');
+    const targetTrack = this.tracks.find((track) => track.id === id);
+    if (!targetTrack) throw new NotFoundException('Track does not exist');
+
+    return targetTrack;
   }
 }
