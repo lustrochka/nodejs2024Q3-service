@@ -7,6 +7,8 @@ import { User } from './user.interface';
 import { validate } from 'uuid';
 import { UserDto } from './user.dto';
 import { plainToClass } from 'class-transformer';
+import { CreateUserDto } from './create-user.dto';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class UserService {
@@ -39,5 +41,19 @@ export class UserService {
     if (!targetUser) throw new NotFoundException('User does not exist');
     const userDto = plainToClass(UserDto, targetUser);
     return userDto;
+  }
+
+  createUser(CreateUserDto: CreateUserDto): User {
+    const { login, password } = CreateUserDto;
+    const newUser: User = {
+      id: v4(),
+      login,
+      password,
+      version: 1,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    this.users.push(newUser);
+    return newUser;
   }
 }
