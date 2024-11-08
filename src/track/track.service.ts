@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 import { Track } from './track.interface';
 import { validate } from 'uuid';
+import { CreateTrackDto } from './create-track.dto';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class TrackService {
@@ -35,5 +37,19 @@ export class TrackService {
     if (!targetTrack) throw new NotFoundException('Track does not exist');
 
     return targetTrack;
+  }
+
+  createTrack(CreateTrackDto: CreateTrackDto): Track {
+    const { name, artistId, albumId, duration } = CreateTrackDto;
+    const newTrack: Track = {
+      id: v4(),
+      name,
+      artistId: artistId ? artistId : null,
+      albumId: albumId ? albumId : null,
+      duration,
+    };
+    this.tracks.push(newTrack);
+
+    return newTrack;
   }
 }
