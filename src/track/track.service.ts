@@ -52,4 +52,11 @@ export class TrackService {
 
     return newTrack;
   }
+
+  deleteTrack(id: string) {
+    if (!validate(id)) throw new BadRequestException('Invalid id');
+    const targetUser = this.tracks.findIndex((user) => user.id === id);
+    if (targetUser === -1) throw new NotFoundException('User does not exist');
+    this.tracks.splice(targetUser, 1);
+  }
 }
