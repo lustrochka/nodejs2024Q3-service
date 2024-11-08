@@ -56,7 +56,9 @@ export class UserService {
       updatedAt: Date.now(),
     };
     this.users.push(newUser);
-    return newUser;
+
+    const userDto = plainToClass(UserDto, newUser);
+    return userDto;
   }
 
   updateUser(updateUserDto: UpdateUserDto, id: string) {
@@ -66,7 +68,11 @@ export class UserService {
     if (!targetUser) throw new NotFoundException('User does not exist');
     if (targetUser.password !== oldPassword)
       throw new ForbiddenException('Wrong old password');
+
     targetUser.password = newPassword;
+    targetUser.version++;
+    targetUser.updatedAt = Date.now();
+
     const userDto = plainToClass(UserDto, targetUser);
     return userDto;
   }
