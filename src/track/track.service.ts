@@ -53,6 +53,21 @@ export class TrackService {
     return newTrack;
   }
 
+  updateTrack(updateTrackDto: CreateTrackDto, id: string) {
+    if (!validate(id)) throw new BadRequestException('Invalid id');
+    const targetTrack = this.tracks.findIndex((user) => user.id === id);
+    if (targetTrack === -1) throw new NotFoundException('User does not exist');
+
+    const existingTrack = this.tracks[targetTrack];
+
+    const updatedTrack: Track = {
+      ...existingTrack,
+      ...updateTrackDto,
+    };
+
+    return updatedTrack;
+  }
+
   deleteTrack(id: string) {
     if (!validate(id)) throw new BadRequestException('Invalid id');
     const targetUser = this.tracks.findIndex((user) => user.id === id);
